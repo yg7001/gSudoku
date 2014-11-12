@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html ng-app="gSudoku-test">
+<head lang="en">
+	<script src="angularjs/angular.min.js"></script>
+	<script src="gSudoku.js"></script>
+	<script src="app.js"></script>
+</head> 
+<body>
+		<div g-sudoku width="100%" height="100%" cellSpacing="5" rowSpacing="5" bgColor="green" cursor="pointer">			
+			<div g-sudoku-row height=".53"  padding="2" bgColor="navy">
+				<div g-sudoku-cell width=".6" title="cell1" image="img/book.gif" bgColor="gray"></div>
+				<div g-sudoku-cell width=".4" title="cell2" image="img/file_web.gif" bgColor="gold"></div>		
+			</div>			
+			<div g-sudoku-row height=".20"  padding="2" bgcolor="darkgray">
+				<div g-sudoku-cell width=".2" title="cell3" image="img/key.gif"  bgColor="yellow"></div>
+				<div g-sudoku-cell width=".6" title="cell4" image="img/itemimg/fotiaoqiang.jpg"  bgColor="white" foreColor="blue"></div>	
+				<div g-sudoku-cell width=".2" title="" image="img/options.gif"  bgColor="pink"></div>		
+			</div>
+			<div g-sudoku-row height=".26" bgColor="purple" padding="10">
+				<div g-sudoku-cell width="30%" title="cell6" image="img/book.gif" bgColor="gold" target="/menu"></div>
+				<div g-sudoku-cell width="70%" title="cell7" image="img/user.gif" bgColor="silver" target="/" cursor="crosshair"></div>		
+			</div>			
+		</div>
+</body>
+</html>
