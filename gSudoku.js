@@ -32,27 +32,27 @@ $gzg.directive("gSudoku",function($rootScope,$timeout){
 	var rsf= function(theScope) {  
 		var scope = theScope;
 		el = scope.el;
-		console.log("sudoku rsf called");
+		console.log("g-sudoku rsf called");
 		if(scope.hr || scope.wr){
 			var ah = document.documentElement.clientHeight || document.body.clientHeight ;
 			var aw = document.documentElement.clientWidth || document.body.clientWidth ;
 			var top = getElementAbsoluteTop(el);
 			ah -= top;
-			console.log("top=",top," ah=",ah,"aw=",aw ," hrate=",scope.hr," wrate=",scope.wr);
+			console.log("g-sudoku rsf top=",top," ah=",ah,"aw=",aw ," hrate=",scope.hr," wrate=",scope.wr);
 			if(scope.hr){
 				scope.totalHeight = ah * scope.hr;
 				el.css("height",scope.height+"px");
-				console.log("sudoku calc height=",scope.totalHeight);
+				console.log("g-sudoku rsf calc height=",scope.totalHeight);
 			}
 			if(scope.wr){
 				scope.totalWidth = aw * scope.wr;
 				el.css("width",scope.width+"px");
-				console.log("sudoku calc width=",scope.totalWidth);
+				console.log("g-sudoku rsf calc width=",scope.totalWidth);
 			}
 			sz = getElementInnerSize(el);
 			var ps = {width:sz.width,height:sz.height};
-			//console.log("sudoku onResize ps=",ps);
-			//console.log("sudoku scope.$parent===",scope.$parent);
+			//console.log("g-sudoku onResize ps=",ps);
+			//console.log("g-sudoku scope.$parent===",scope.$parent);
 			scope.ctrl.onResize(ps);
 			//scope.$broadcast("G_EVT_SUDOKU_LAYOUT",ps);
 		}		
@@ -95,7 +95,7 @@ $gzg.directive("gSudoku",function($rootScope,$timeout){
 				var top = this.getRowTop(cell.rowIndex);
 				var nTop = {"top":top+"px"};
 				cell.el.css(nTop);
-				console.log("sudoku layoutCell to set cell",cell.el[0].innerText,cell.rowIndex,cell.cellIndex,"  at top :",nTop);
+				console.log("g-sudoku layoutCell to set cell",cell.el[0].innerText,cell.rowIndex,cell.cellIndex,"  at top :",nTop);
 			},
 			onResize:function(){
 				var rgap = this.getRowSpacing();
@@ -105,7 +105,7 @@ $gzg.directive("gSudoku",function($rootScope,$timeout){
 				var rowsHeight=this.rowsHeight;
 				angular.forEach(this.rows,function(row,ind){
 					var sizeRow = {"top" : top+"px"};
-					//console.log("sudoku onResize to set row top:",sizeRow);
+					//console.log("g-sudoku onResize to set row top:",sizeRow);
 					row.el.css(sizeRow);
 					var rh=row.fn(ps);
 					rowsHeight[ind]=rh;
@@ -143,11 +143,11 @@ $gzg.directive("gSudoku",function($rootScope,$timeout){
 				
 		});
 		$scope.ctrl= this;
-		//console.log("sudoku controller scope=",$scope);
+		//console.log("g-sudoku controller scope=",$scope);
 	}/** end of controller of sudoku */
 	,link:function(scope,element,attrs){
 		//element.css({"position":"absolute","z-index":"103"});
-		console.log("sudoku link ,cellSpacing=",scope.cellSpacing," bgColor=",scope.bgColor," scope=",scope);
+		console.log("g-sudoku link ,cellSpacing=",scope.cellSpacing," bgColor=",scope.bgColor," scope=",scope);
 		scope.scopeName = "g-sudoku-scope";
 		scope.el=element;
 		element.addClass("g-sudoku");
@@ -178,26 +178,30 @@ $gzg.directive("gSudokuRow",function($rootScope){
 	var row_rsf=function(scope,newSize){
 		if(!scope || !scope.el)return;
 		var el = scope.el;
-		console.log("sudoku-row rsf called");
+		console.log("g-sudoku-row rsf called with newSize=",newSize);
 		if(scope.hr){
 			var gap = getElementExtraHeight(el);
-			console.log("sudoku-row hr=",scope.hr,"parent height=",newSize.height," extraHeight=",gap);
+			console.log("g-sudoku-row hr=",scope.hr,"parent height=",newSize.height," extraHeight=",gap);
 			if(scope.hr*newSize.height != scope.height){
 				scope.height = scope.hr * newSize.height;// -gap/* no need to subtract this*/;
 				el.css("height",scope.height+"px" );
-				console.log("sudoku-row calc height=",scope.height);
+				console.log("g-sudoku-row calc height=",scope.height);
 			}
 		}
 		//for(pp in el){console.log(pp);}
-		var w=el[0].offsetWidth;
+		var ew =  getElementExtraWidth(el[0]);
+		var ow = el[0].offsetWidth;
+		var nw = newSize.width - ew;
+		console.log("g-sudoku-row rsf offsetWidth , extraWidth ,destCssWidth =",ow,ew,nw);
+		var w=ow;
 		if(w != newSize.width){
-			el.css("width",newSize.width+"px");		
+			el.css("width",nw+"px");		
 		}
 		var sz = getElementInnerSize(el);
 		var nw = sz.width - scope.cellSpacing * (scope.ctrl.cells.length -1);
 		
 		var ps = {width:nw,height:sz.height};
-		console.log("sudoku-row sizeChanged ,calling cell's onResize with ps=",ps);
+		console.log("g-sudoku-row sizeChanged ,calling cell's onResize with ps=",ps);
 		//scope.$broadcast("G_EVT_SUDOKU_CELL_LAYOUT",ps);
 		scope.ctrl.onResize(ps);
 		return scope.height;
@@ -224,7 +228,7 @@ $gzg.directive("gSudokuRow",function($rootScope){
 				var d= $scope.el[0];
 				var pl=d.style.paddingLeft?parseInt(d.style.paddingLeft):0;
 				var right=-1 + pl;
-				console.log("sudoku-row resizing cell with cellSpacing=",$scope.cellSpacing);
+				console.log("g-sudoku-row resizing cell with cellSpacing=",$scope.cellSpacing);
 				angular.forEach(this.cells,function(cell,ind){
 					/*if(cell.el[0].parentElement===$scope.el[0]){
 						var ctl = $scope.parentCtrl;
@@ -235,7 +239,7 @@ $gzg.directive("gSudokuRow",function($rootScope){
 					}*/
 					$scope.parentCtrl.layoutCell(cell);
 					ps.left = right+1;
-					console.log("sudoku-row calling cell resizeFn with ps=",ps," spacing=",$scope.cellSpacing);
+					console.log("g-sudoku-row calling cell resizeFn with ps=",ps," spacing=",$scope.cellSpacing);
 					var w=cell.fn(cell.scope,ps);
 					right += (w + $scope.cellSpacing);
 				});
@@ -252,7 +256,7 @@ $gzg.directive("gSudokuRow",function($rootScope){
 	,link:function(scope,el,attrs,pCtrl){
 		scope.scopeName = "g-sudoku-row-scope";
 		scope.el = el; scope.parentCtrl = pCtrl;
-		console.log("sudoku-row link.");
+		console.log("g-sudoku-row link.");
 		el.addClass("g-sudoku-row");
 		var h=attrs["height"];
 		h = getNumAttr(h);
@@ -276,31 +280,36 @@ $gzg.directive("gSudokuRow",function($rootScope){
 	return dv;
 });
 /**===================== Sudoku cell directive ========================*/
-$gzg.directive("gSudokuCell",function($compile,$rootScope,$timeout,$location){
+$gzg.directive("gSudokuCell",function($compile,$rootScope,$timeout,$location,$window){
 	var cell_rsf = function(theScope,ps){
 		var scope = theScope;
 		if(!scope || !scope.el)return;
 		var el= scope.el;
-		if(!el[0].style.cursor){
+		var dom=el[0];
+		if(!dom.style.cursor){
 			cursor = scope.target ? (scope.cursor || scope.rowCtrl.getCursor()) : "default";
-			console.log("sudoku-cell to cursor=",cursor);
+			console.log("g-sudoku-cell to cursor=",cursor);
 			el.css("cursor",cursor);
 		}
-		console.log("sudoku-cell-",scope.title," rsf called ,wr=",scope.wr);
-		var h = el[0].offsetHeight,w = el[0].offsetWidth;
+		console.log("g-sudoku-cell-",scope.title," rsf called ,wr=",scope.wr," with ps=",ps);
+		var h = dom.offsetHeight,w = dom.offsetWidth;
+		var ew = getElementExtraWidth(dom);
 		var nw=w;
 		if(scope.wr){
 			nw = scope.wr * ps.width;
-			if(nw!=w) el.css("width",nw+"px");
+			if(nw!=w) {
+				nw = nw - ew;
+				el.css("width",nw+"px");
+			}
 		}
 		if(ps.height!=h)el.css("height",ps.height+"px");
 		el.css("left",ps.left+"px");
 		//el.css("top",el[0].parentElement.offsetTop+getFinalStyle(el,"paddingTop")+"px");
-		console.log("sudoku-cell calced,left=",ps.left," width=",nw," height=",ps.height);
+		console.log("g-sudoku-cell calced,left=",ps.left," width=",nw," height=",ps.height);
 		dis = getFinalStyle(el,"display");
 		if(dis.indexOf("box")<0){
-			console.log("sudoku-cell-",scope.title||''," display not box");
-			d = el[0].querySelector("div");
+			console.log("g-sudoku-cell-",scope.title||''," display not box");
+			var d = el[0].querySelector("div");
 			if(d){
 				console.log("******* now to adjust inner div by program **********");			
 				position = getFinalStyle(d,"position");
@@ -320,7 +329,7 @@ $gzg.directive("gSudokuCell",function($compile,$rootScope,$timeout,$location){
 		}else{
 			console.log("******* good! box style worked ******");
 		}
-		//console.log("sudoku-cell.scope scope.$parent scope.$parent.$parent",scope,scope.$parent,scope.$parent.$parent);
+		//console.log("g-sudoku-cell.scope scope.$parent scope.$parent.$parent",scope,scope.$parent,scope.$parent.$parent);
 		return nw;
 	};
 	var dv={	
@@ -334,7 +343,7 @@ $gzg.directive("gSudokuCell",function($compile,$rootScope,$timeout,$location){
 		scope.el = el;
 		scope.scopeName = "g-sudoku-cell-scope";
 		scope.rowCtrl = rowCtrl;
-		console.log("sudoku-cell link ");		
+		console.log("g-sudoku-cell link ");		
 		
 		
 		scope.image = attrs["image"]||"";
@@ -389,17 +398,29 @@ $gzg.directive("gSudokuCell",function($compile,$rootScope,$timeout,$location){
 			var oldcssLeft=el.css("left");
 			var oldcssTop=el.css("top");
 			var newPos ={"left":(tw/2-sz.width/2)+"px","top":(th/2-sz.height/2)+"px"}; 
-			console.log("sudoku-cell new pos=",newPos);
+			console.log("g-sudoku-cell new pos=",newPos);
 			el.css(newPos);
-			el.addClass("g-sudoku-cell-tapped");
-			$timeout(function(){el.removeClass("g-sudoku-cell-tapped");
-				el.css({"left":oldcssLeft,"top":oldcssTop});
-				el.data("clickable",true);
-			},2500);
 			if(scope.target){
-				$location.path(scope.target);
-				console.log("sudoku-cell on tap ,change location to ",scope.target);
+				var rg=/(^\w+\:\/\/){0,1}(\w+\.\w+)+/gi;
+				if(rg.test(scope.target)){
+					$window.location.href=scope.target;
+					console.log("g-sudoku-cell on tap ,target is abolute url! now jump to ",scope.target);
+					angular.element(document).on("unload",function(){
+						el.removeClass("g-sudoku-cell-tapped");
+						el.css({"left":oldcssLeft,"top":oldcssTop});
+					});
+				}else{
+					$location.path(scope.target);
+					console.log("g-sudoku-cell on tap ,change location to ",scope.target);
+					$timeout(function(){el.removeClass("g-sudoku-cell-tapped");
+						el.css({"left":oldcssLeft,"top":oldcssTop});
+						el.data("clickable",true);
+					},5000);
+				}
 			}
+			el.addClass("g-sudoku-cell-tapped");
+			
+			
 		});
 	 }
 	};
@@ -449,7 +470,7 @@ function getElementAbsolutePos(domel){
 }
 function getElementInnerSize(domel){
 	var d = toDomElement(domel);
-	var	h = d.clientHeight,w = d.clientWidth;
+	var	h = d.offsetHeight,w = d.offsetWidth;
 	if(d.style && d.style.padding){
 		h -= (parseInt(d.style.paddingTop)  + parseInt(d.style.paddingBottom));
 		w -= (parseInt(d.style.paddingLeft) + parseInt(d.style.paddingRight));
